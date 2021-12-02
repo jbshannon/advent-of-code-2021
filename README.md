@@ -1,5 +1,5 @@
 # advent-of-code-2021
-My solutions to 2021's Advent of Code puzzles.
+My solutions to 2021's [Advent of Code](https://adventofcode.com/2021) puzzles.
 
 ## Day 1
 
