@@ -1,5 +1,5 @@
 # advent-of-code-2021
-My solutions to 2021's [Advent of Code](https://adventofcode.com/2021) puzzles.
+My solutions to 2021's [Advent of Code](https://adventofcode.com/2021) puzzles. My goal is to create the simplest "first-pass" solutions I can using only Base [Julia](https://julialang.org).
 
 ## Day 1
 
