@@ -1,7 +1,7 @@
 # Part 1
 horizontal, depth = 0, 0
 
-for line in eachline(joinpath(@__DIR__, "input.txt"))
+for line in eachline("input.txt")
     direction, distance = split(line, " ")
     distance = parse(Int, distance)
     if direction == "forward"
@@ -18,7 +18,7 @@ end
 # Part 2
 horizontal, depth, aim = 0, 0, 0
 
-for line in eachline(joinpath(@__DIR__, "input.txt"))
+for line in eachline("input.txt")
     direction, distance = split(line, " ")
     distance = parse(Int, distance)
     if direction == "forward"

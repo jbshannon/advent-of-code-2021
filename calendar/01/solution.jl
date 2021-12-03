@@ -1,5 +1,5 @@
 # Load data
-data = parse.(Int, readlines(joinpath(@__DIR__, "input.txt")))
+data = parse.(Int, readlines("input.txt"))
 
 # Part 1
 ans1 = sum([data[i] > data[i-1] for i in 2:length(data)])
