@@ -8,8 +8,6 @@ boards = map(readarray ∘ x -> join(x, '\n'), Base.Iterators.partition(rest, 6)
 bingo_rows = vcat(
     [[CartesianIndex(i, j) for i in 1:5] for j in 1:5], # column indices
     [[CartesianIndex(i, j) for j in 1:5] for i in 1:5], # row indices
-    [[CartesianIndex(i, i) for i in 1:5]], # diagonal
-    [[CartesianIndex(6-i, i) for i in 1:5]], # other diagonal
 )
 mark_board(board, i) = reduce(.|, nums[j] .∈ board for j in 1:i)
 check_win(marks) = map(all ∘ x -> marks[x], bingo_rows) |> any
