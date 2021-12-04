@@ -101,12 +101,10 @@ score_board(board) = (i = win_time(board); nums[i] * sum(board[.!mark_board(boar
 win_times = map(win_time, boards)
 
 # Part 1
-first_time = findmin(win_times)[2]
-first_winner = boards[first_time]
-@info "Score of first winning board = $(score_board(first_winner))" first_time
+first_time, i = findmin(win_times)
+@info "Score of first winning board = $(score_board(boards[i]))" first_time
 
 # Part 2
-last_time = findmax(win_times)[2]
-last_winner = boards[last_time]
-@info "Score of last winning board = $(score_board(last_winner))" last_time
+last_time, i = findmax(win_times)
+@info "Score of last winning board = $(score_board(boards[i]))" last_time
 ```
