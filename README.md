@@ -61,7 +61,7 @@ diagnostic = map(x -> parse.(Bool, split(x, "")), readlines("input.txt"))
 γ = sum(diagnostic) .>= length(diagnostic)/2
 ϵ = .!γ
 bit2decimal(x) = sum([2^(i-1) for i in eachindex(x) if Bool(x[end-(i-1)])])
-@info "Power consumption = $(mapreduce(bit2decimal, *, [γ, ϵ]))" bit2decimal(γ) bit2decimal(ϵ)
+@info "Power consumption = $(prod(bit2decimal, [γ, ϵ]))" bit2decimal(γ) bit2decimal(ϵ)
 
 # Part 2
 bitfilter(y, b, i) = filter(y) do x
@@ -76,5 +76,37 @@ function findrate(z, b)
 end
 
 O₂, CO₂ = map(x -> findrate(diagnostic, x), [true, false])
-@info "Life support rating = $(mapreduce(bit2decimal, *, [O₂, CO₂]))" bit2decimal(O₂) bit2decimal(CO₂)
+@info "Life support rating = $(prod(bit2decimal, [O₂, CO₂]))" bit2decimal(O₂) bit2decimal(CO₂)
+```
+
+## Day 4
+```julia
+# Read input
+readarray(x) = "[$x]" |> Meta.parse |> eval
+firstline, rest = Base.Iterators.peel(readlines("input.txt"))
+nums = readarray(firstline)
+boards = map(readarray ∘ x -> join(x, '\n'), Base.Iterators.partition(rest, 6))
+
+# Bingo functions
+bingo_rows = vcat(
+    [[CartesianIndex(i, j) for i in 1:5] for j in 1:5], # column indices
+    [[CartesianIndex(i, j) for j in 1:5] for i in 1:5], # row indices
+    [[CartesianIndex(i, i) for i in 1:5]], # diagonal
+    [[CartesianIndex(6-i, i) for i in 1:5]], # other diagonal
+)
+mark_board(board, i) = reduce(.|, nums[j] .∈ board for j in 1:i)
+check_win(marks) = map(all ∘ x -> marks[x], bingo_rows) |> any
+win_time(board) = map(check_win ∘ i -> mark_board(board, i), eachindex(nums)) |> findfirst
+score_board(board) = (i = win_time(board); nums[i] * sum(board[.!mark_board(board, i)]))
+win_times = map(win_time, boards)
+
+# Part 1
+first_time = findmin(win_times)[2]
+first_winner = boards[first_time]
+@info "Score of first winning board = $(score_board(first_winner))" first_time
+
+# Part 2
+last_time = findmax(win_times)[2]
+last_winner = boards[last_time]
+@info "Score of last winning board = $(score_board(last_winner))" last_time
 ```

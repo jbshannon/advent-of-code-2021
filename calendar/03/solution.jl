@@ -3,7 +3,7 @@ diagnostic = map(x -> parse.(Bool, split(x, "")), readlines("input.txt"))
 γ = sum(diagnostic) .>= length(diagnostic)/2
 ϵ = .!γ
 bit2decimal(x) = sum([2^(i-1) for i in eachindex(x) if Bool(x[end-(i-1)])])
-@info "Power consumption = $(mapreduce(bit2decimal, *, [γ, ϵ]))" bit2decimal(γ) bit2decimal(ϵ)
+@info "Power consumption = $(prod(bit2decimal, [γ, ϵ]))" bit2decimal(γ) bit2decimal(ϵ)
 
 # Part 2
 bitfilter(y, b, i) = filter(y) do x
@@ -18,4 +18,4 @@ function findrate(z, b)
 end
 
 O₂, CO₂ = map(x -> findrate(diagnostic, x), [true, false])
-@info "Life support rating = $(mapreduce(bit2decimal, *, [O₂, CO₂]))" bit2decimal(O₂) bit2decimal(CO₂)
+@info "Life support rating = $(prod(bit2decimal, [O₂, CO₂]))" bit2decimal(O₂) bit2decimal(CO₂)
