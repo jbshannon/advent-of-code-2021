@@ -1,7 +1,7 @@
 vents = map(split(read("input.txt", String), '\n')) do line
     parse.(Int, match(r"(\d*),(\d*) -> (\d*),(\d*)", line).captures)
 end
-ocean_floor = zeros(Int8, 999, 999)
+ocean_floor = fill(0, (999, 999))
 
 isvert(p) = p[1] == p[3] || p[2] == p[4]
 function mark_vents!(ocean_floor, vents)
