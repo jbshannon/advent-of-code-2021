@@ -228,3 +228,131 @@ end
 
 @info "Sum of output values = $(sum(unscramble, lines))"
 ```
+
+## Day 9
+```julia
+A = mapreduce(line -> parse.(Int8, split(line, "")), hcat, readlines("input.txt"))
+const CI = CartesianIndex
+const udlr = [CI(1, 0), CI(-1, 0), CI(0, -1), CI(0, 1)]
+const AI = CartesianIndices(A)
+
+function find_danger_points(A)
+    danger_points = Set{CartesianIndex}()
+    for I in AI
+        if A[I] < minimum(A[I + x] for x in udlr if I + x in AI)
+            push!(danger_points, I)
+        end
+    end
+    return collect(danger_points)
+end
+
+function expand!(basin)
+    for b in basin
+        for a in udlr
+          n = b + a
+            if n in AI && A[b] <= A[n] < 9
+                push!(basin, n)
+            end
+        end
+    end
+    return basin
+end
+
+function basin_size(I)
+    basin = Set([I])
+    B₀, B₁ = 0, 1
+    while B₁ > B₀
+        B₀ = B₁
+        expand!(basin)
+        B₁ = length(basin)
+    end
+    return B₁
+end
+
+danger_points = find_danger_points(A)
+@info "Risk scores = $(sum(i -> A[i]+1, danger_points))"
+@info "Product of three largest basins = $(prod(sort!(map(basin_size, danger_points), rev=true)[1:3]))"
+```
+
+## Day 10
+```julia
+lines = readlines("input.txt")
+
+function syntax_check(lines)
+    B = Dict('(' => ')', '[' => ']', '{' => '}', '<' => '>') # brackets
+    ES = Dict(')' => 3, ']' => 57, '}' => 1197, '>' => 25137) # error scores
+    CS = Dict('(' => 1, '[' => 2, '{' => 3, '<' => 4) # completion scores
+
+    lefts = Char[]
+    error_score = 0
+    completion_score = 0
+    completion_scores = Int[]
+    
+    for line in lines
+        for c in line
+            if c in keys(B)
+                push!(lefts, c)
+            else
+                if c == B[pop!(lefts)]
+                    continue
+                else
+                    error_score += ES[c]
+                    empty!(lefts)
+                    break
+                end
+            end
+        end
+        if !isempty(lefts)
+            while !isempty(lefts)
+                completion_score = 5*completion_score + CS[pop!(lefts)]
+            end
+            push!(completion_scores, completion_score)
+            completion_score -= completion_score
+        end
+    end
+    return error_score, completion_scores
+end
+
+error_score, completion_scores = syntax_check(lines)
+@info "Syntax error score = $error_score"
+@info "Median completion score = $(sort!(completion_scores)[end÷2+1])"
+```
+
+## Day 11
+```julia
+🐙 = reduce(hcat, map(line -> parse.(Int8, split(line, "")), readlines("input.txt")))
+💡 = fill(false, size(🐙))
+const R = CartesianIndices(🐙)
+const If, Il = extrema(R)
+const I1 = one(If)
+
+function flash!(🐙, 💡, I)
+    💡[I] = true
+    for i in max(I-I1, If):min(I+I1, Il)
+        🐙[i] += 1
+        🐙[i] > 9 && !💡[i] && flash!(🐙, 💡, i)
+    end
+end
+
+function step!(🐙, 💡)
+    fill!(💡, false)
+    for I in R; 🐙[I] += 1; end
+    for I in R; 🐙[I] > 9 && !💡[I] && flash!(🐙, 💡, I); end
+    for I in R; 💡[I] && (🐙[I] = 0); end
+end
+
+function solve(🐙, 💡)
+    🧮 = 💥 = i = 0
+    while !all(💡) || i <= 100
+        i += 1
+        step!(🐙, 💡)
+        🧮 = i <= 100 ? 🧮 + sum(💡) : 🧮
+        💥 = all(💡) ? 💥 + i : 💥
+    end
+    return 🧮, 💥
+end
+
+🧮, 💥 = solve(🐙, 💡)
+@info "Number of flashes in first 100 steps = $🧮"
+@info "First step where all flash = $💥"
+```
